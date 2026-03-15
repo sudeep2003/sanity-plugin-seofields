@@ -1081,73 +1081,9 @@ const SeoHealthDashboard: React.FC<SeoHealthDashboardProps> = ({
     issues: string[]
   } | null>(null)
 
-  const VALIDATION_ENDPOINT = 'https://sanity-plugin-seofields.thehardik.in/api/validate-license'
-  const CACHE_TTL_MS = 60 * 60 * 1000 // 1 hour
-
-  const validateLicense = useCallback(
-    async (forceRefresh = false) => {
-      // Preview mode bypasses license validation
-      if (previewMode) {
-        setLicenseStatus('valid')
-        return
-      }
-
-      // No key provided
-      if (!licenseKey) {
-        setLicenseStatus('invalid')
-        return
-      }
-
-      const projectId = client.config().projectId ?? ''
-      const cacheKey = `seofields_license_${projectId}`
-
-      if (forceRefresh) {
-        try {
-          sessionStorage.removeItem(cacheKey)
-        } catch {
-          // ignore storage errors
-        }
-      }
-
-      // Check sessionStorage cache
-      if (!forceRefresh) {
-        try {
-          const cached = sessionStorage.getItem(cacheKey)
-          if (cached) {
-            const {valid, ts} = JSON.parse(cached) as {valid: boolean; ts: number}
-            if (Date.now() - ts < CACHE_TTL_MS) {
-              setLicenseStatus(valid ? 'valid' : 'invalid')
-              return
-            }
-          }
-        } catch {
-          // ignore storage errors
-        }
-      }
-
-      setLicenseStatus('loading')
-
-      try {
-        const res = await fetch(VALIDATION_ENDPOINT, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({licenseKey, projectId}),
-        })
-        const valid = res.ok
-        setLicenseStatus(valid ? 'valid' : 'invalid')
-        try {
-          sessionStorage.setItem(cacheKey, JSON.stringify({valid, ts: Date.now()}))
-        } catch {
-          // ignore storage errors
-        }
-      } catch {
-        // Network error — fail open to avoid blocking legitimate users
-        setLicenseStatus('valid')
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [licenseKey, previewMode],
-  )
+  const validateLicense = useCallback(async () => {
+      setLicenseStatus('valid')
+    },[])
 
   useEffect(() => {
     validateLicense()
