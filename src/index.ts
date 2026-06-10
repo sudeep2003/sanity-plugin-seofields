@@ -10,17 +10,16 @@ export * from './plugin'
 // Export schema types for external use
 export {default as seoFieldsSchema} from './schemas'
 export {default as allSchemas} from './schemas/types'
+export {default as baseMetaSchema} from './schemas/types/baseMeta'
 export {default as metaAttributeSchema} from './schemas/types/metaAttribute'
 export {default as metaTagSchema} from './schemas/types/metaTag'
 export {default as openGraphSchema} from './schemas/types/openGraph'
 export {default as robotsSchema} from './schemas/types/robots'
 export {default as twitterSchema} from './schemas/types/twitter'
 
-// Export dashboard components and types
-export {default as SeoHealthDashboard} from './components/SeoHealthDashboard'
-export {default as SeoHealthTool} from './components/SeoHealthTool'
-export {createSeoHealthPane} from './components/SeoHealthPane'
+// Export dashboard factory (lazy — avoids styled-components at import time)
 export type {SeoHealthPaneOptions} from './components/SeoHealthPane'
+export {createSeoHealthPane} from './components/SeoHealthPane'
 
 // Export types
 export type {DocumentWithSeoHealth, SeoHealthMetrics, SeoHealthStatus} from './types'

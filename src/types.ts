@@ -35,8 +35,8 @@ export interface RobotsSettings {
 // Meta Attribute
 export interface MetaAttribute {
   _type: 'metaAttribute'
-  key: string
-  type: 'string' | 'image'
+  key?: string
+  type?: 'string' | 'image'
   value?: string
   image?: SanityImage
 }
@@ -44,6 +44,8 @@ export interface MetaAttribute {
 // Open Graph settings
 export interface OpenGraphSettings {
   _type: 'openGraph'
+  /** The canonical URL for OpenGraph (og:url). Maps to the `url` field in Sanity. */
+  url?: string
   title?: string
   description?: string
   siteName?: string
@@ -58,6 +60,7 @@ export interface TwitterCardSettings {
   _type: 'twitter'
   card?: 'summary' | 'summary_large_image' | 'app' | 'player'
   site?: string
+  creator?: string
   title?: string
   description?: string
   imageType?: 'upload' | 'url'
@@ -73,6 +76,7 @@ export interface SeoFields {
   title?: string
   description?: string
   metaImage?: SanityImage
+  metaAttributes?: MetaAttribute[]
   keywords?: string[]
   canonicalUrl?: string
   openGraph?: OpenGraphSettings
@@ -101,4 +105,20 @@ export interface DocumentWithSeoHealth {
   seo?: SeoFields
   _updatedAt?: string
   health: SeoHealthMetrics
+}
+
+/**
+ * A single deprecation warning entry produced by the plugin when it detects
+ * a deprecated config key.  Each entry carries the migration hint, the plugin
+ * version in which the key was deprecated, and the matching changelog URL so
+ * the dashboard banner can render per-version links even when warnings come
+ * from multiple release cycles.
+ */
+export interface DeprecationWarning {
+  /** Migration hint shown in the banner, e.g. "display.typeColumn → showTypeColumn". */
+  key: string
+  /** Plugin version that deprecated this key, e.g. "v1.3.2". */
+  version: string
+  /** Full changelog URL for this deprecation, e.g. ".../CHANGELOG.md#132--2026-03-23". */
+  changelogUrl: string
 }

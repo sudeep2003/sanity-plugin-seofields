@@ -1,7 +1,9 @@
-import React from 'react'
+import {lazy, Suspense} from 'react'
 import type {ComponentBuilder, StructureBuilder} from 'sanity/structure'
 
-import SeoHealthDashboard, {SeoHealthDashboardProps} from './SeoHealthDashboard'
+import type {SeoHealthDashboardProps} from './SeoHealthDashboard'
+
+const LazySeoHealthDashboard = lazy(() => import('./SeoHealthDashboard'))
 
 /**
  * Options accepted by `createSeoHealthPane`.
@@ -64,8 +66,15 @@ export function createSeoHealthPane(
   const S = optionsOrS
   const {query, openInPane = true, title: paneTitle, ...rest} = optionsWhenS ?? {}
 
-  const SeoHealthPane: React.FC = () => (
-    <SeoHealthDashboard customQuery={query} openInPane={openInPane} title={paneTitle} {...rest} />
+  const SeoHealthPane = () => (
+    <Suspense fallback={null}>
+      <LazySeoHealthDashboard
+        customQuery={query}
+        openInPane={openInPane}
+        title={paneTitle}
+        {...rest}
+      />
+    </Suspense>
   )
   SeoHealthPane.displayName = 'SeoHealthPane'
 

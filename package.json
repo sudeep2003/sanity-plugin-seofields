@@ -1,50 +1,121 @@
 {
   "name": "sanity-plugin-seofields",
-  "version": "1.2.3",
-  "description": "A Sanity Studio plugin to manage SEO fields like meta titles, descriptions, and Open Graph tags for structured, search-optimized content.",
+  "version": "1.6.5",
+  "description": "The only Sanity Studio SEO plugin with a built-in audit dashboard. Manage meta tags, Open Graph, Twitter Cards, robots directives, JSON-LD structured data, and 38 Schema.org types.",
   "keywords": [
     "sanity",
     "sanity-plugin",
+    "sanity-v3",
+    "sanity-v4",
+    "sanity-v5",
     "seo",
     "meta",
-    "open graph",
+    "open-graph",
+    "twitter-card",
+    "robots",
+    "json-ld",
+    "schema-org",
+    "structured-data",
+    "seo-plugin",
+    "seo-dashboard",
+    "metadata",
+    "headless-cms",
+    "nextjs",
+    "next.js",
     "social media",
     "content management",
-    "structured data",
     "search engine optimization"
   ],
   "license": "MIT",
   "author": "Desai Hardik <dhardik1430@gmail.com>",
-  "sideEffects": false,
-  "type": "commonjs",
+  "type": "module",
+  "bin": {
+    "seofields": "./dist/cli.js"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "exports": {
     ".": {
-      "source": "./src/index.ts",
-      "import": "./dist/index.mjs",
-      "default": "./dist/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     },
-    "./package.json": "./package.json"
+    "./next": {
+      "types": "./dist/next.d.ts",
+      "import": "./dist/next.js",
+      "require": "./dist/next.cjs"
+    },
+    "./schema": {
+      "types": "./dist/schema.d.ts",
+      "import": "./dist/schema.js",
+      "require": "./dist/schema.cjs"
+    },
+    "./schema/next": {
+      "source": "./src/schema/next.ts",
+      "import": "./dist/schema/next.js",
+      "require": "./dist/schema/next.cjs",
+      "default": "./dist/schema/next.js"
+    },
+    "./package.json": "./package.json",
+    "./define-cli": {
+      "types": "./dist/define-cli.d.ts",
+      "import": "./dist/define-cli.js",
+      "require": "./dist/define-cli.cjs"
+    }
   },
-  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "next": [
+        "./dist/next.d.ts"
+      ],
+      "schema": [
+        "./dist/schema.d.ts"
+      ],
+      "schema/next": [
+        "./dist/schema/next.d.ts"
+      ],
+      "define-cli": [
+        "./dist/define-cli.d.ts"
+      ]
+    }
+  },
+  "sideEffects": false,
   "files": [
-    "dist",
-    "sanity.json",
-    "src",
-    "v2-incompatible.js"
+    "dist"
   ],
   "scripts": {
-    "build": "plugin-kit verify-package --silent && pkg-utils build --strict --check --clean",
-    "format": "prettier --write --cache --ignore-unknown .",
+    "build": "tsup",
+    "watch": "tsup --watch",
     "link-watch": "plugin-kit link-watch",
+    "format": "prettier --write --cache --ignore-unknown .",
     "lint": "eslint .",
     "prepublishOnly": "npm run build",
-    "generate-schema": "npx tsx schema-generator.ts",
-    "watch": "pkg-utils watch --strict"
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "sanityPlugin": {
+    "linkWatch": {
+      "command": "pnpm run watch"
+    },
+    "verifyPackage": {
+      "pkg-utils": false,
+      "scripts": false,
+      "tsconfig": false,
+      "sanityV2Json": false,
+      "eslintImports": false
+    }
   },
   "dependencies": {
+    "@clack/prompts": "^1.1.0",
+    "@sanity/client": "^7.20.0",
     "@sanity/incompatible-plugin": "^1.0.5",
-    "@sanity/ui": "^3.1.4"
+    "@sanity/ui": "^3.1.4",
+    "commander": "^14.0.3",
+    "ora": "^9.3.0",
+    "picocolors": "^1.1.1"
   },
   "repository": {
     "type": "git",
@@ -52,32 +123,63 @@
   },
   "devDependencies": {
     "@sanity/codegen": "^4.9.0",
-    "@sanity/pkg-utils": "^8.1.13",
-    "@sanity/plugin-kit": "^4.0.19",
+    "@sanity/icons": "^3.7.4",
+    "@sanity/plugin-kit": "^4.0.20",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.6.0",
     "@types/react": "^19.1.13",
     "@typescript-eslint/eslint-plugin": "^8.44.0",
     "@typescript-eslint/parser": "^8.44.0",
+    "babel-jest": "^30.3.0",
+    "baseline-browser-mapping": "^2.10.8",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-config-sanity": "^7.1.4",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
+    "husky": "^9.1.7",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
+    "lint-staged": "^16.4.0",
     "prettier": "^3.6.2",
     "prettier-plugin-packagejson": "^2.5.19",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "sanity": "^4.10.0",
+    "sanity": "^5.0.0",
     "styled-components": "^6.1.19",
+    "ts-jest": "^29.4.6",
     "ts-json-schema-generator": "^2.4.0",
+    "tsup": "^8.0.0",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
   },
   "peerDependencies": {
+    "@sanity/icons": ">=2",
     "react": "^18 || ^19",
-    "sanity": "^3 || ^4"
+    "sanity": "^3 || ^4 || ^5"
   },
   "engines": {
     "node": ">=18"
+  },
+  "homepage": "https://sanity-plugin-seofields.thehardik.in",
+  "bugs": {
+    "url": "https://github.com/hardik-143/sanity-plugin-seofields/issues"
+  },
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/hardik-143"
+    },
+    {
+      "type": "buymeacoffee",
+      "url": "https://buymeacoffee.com/thehardik"
+    }
+  ],
+  "sanity": {
+    "plugin": true
   }
 }
