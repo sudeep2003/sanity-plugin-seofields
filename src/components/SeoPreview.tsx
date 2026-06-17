@@ -156,7 +156,11 @@ const SeoPreview = (props: StringInputProps): ReactElement => {
       const u = new URL(finalUrl || base)
       return u.hostname
     } catch {
-      return 'example.com'
+      try {
+        return new URL(baseUrl).hostname
+      } catch {
+        return baseUrl
+      }
     }
   })()
 
@@ -192,7 +196,7 @@ const SeoPreview = (props: StringInputProps): ReactElement => {
         </PreviewHeader>
 
         <PreviewBody>
-          <SerpUrl>{finalUrl ? urlDisplay : 'example.com › page-url'}</SerpUrl>
+          <SerpUrl>{finalUrl ? urlDisplay : `${domain} › page-url`}</SerpUrl>
           <SerpTitle>
             {title && title.length > 0 ? (
               <>
