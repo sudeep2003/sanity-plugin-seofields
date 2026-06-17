@@ -90,6 +90,7 @@
     "link-watch": "plugin-kit link-watch",
     "format": "prettier --write --cache --ignore-unknown .",
     "lint": "eslint .",
+    "prepare": "npm run build",
     "prepublishOnly": "npm run build",
     "typecheck": "tsc --noEmit",
     "test": "jest",
