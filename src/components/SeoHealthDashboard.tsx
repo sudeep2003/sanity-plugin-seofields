@@ -1914,81 +1914,11 @@ const SeoHealthDashboard = ({
     }
   }, [])
 
-  const validateLicense = useCallback(
-    async (forceRefresh = false) => {
-      // Preview mode bypasses license validation
-      if (previewMode) {
-        setLicenseStatus('valid')
-        return
-      }
-
-      // No key provided
-      if (!licenseKey) {
-        setLicenseStatus('invalid')
-        return
-      }
-
-      const projectId = client.config().projectId ?? ''
-      const cacheKey = `seofields_license_${projectId}`
-
-      if (forceRefresh) {
-        try {
-          sessionStorage.removeItem(cacheKey)
-        } catch {
-          // ignore storage errors
-        }
-      }
-
-      // Check sessionStorage cache
-      if (!forceRefresh) {
-        const cachedLicenseState = readCachedLicenseState(cacheKey)
-        if (cachedLicenseState) {
-          applyLicenseState(cachedLicenseState)
-          return
-        }
-      }
-
-      setLicenseStatus('loading')
-
-      try {
-        const res = await fetch(VALIDATION_ENDPOINT, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({licenseKey, projectId}),
-        })
-        const data = (await res.json().catch(() => ({}))) as {
-          valid?: boolean
-          legacy?: boolean
-          upgradeUrl?: string
-          cutoffDate?: string | null
-        }
-        const valid = res.ok
-        const legacy = valid && data.legacy === true
-
-        applyLicenseState({valid, legacy, upgradeUrl: data.upgradeUrl, cutoffDate: data.cutoffDate})
-
-        try {
-          sessionStorage.setItem(
-            cacheKey,
-            JSON.stringify({
-              valid,
-              legacy,
-              upgradeUrl: data.upgradeUrl,
-              cutoffDate: data.cutoffDate,
-              ts: Date.now(),
-            }),
-          )
-        } catch {
-          // ignore storage errors
-        }
-      } catch {
-        // Network error — fail open to avoid blocking legitimate users
-        setLicenseStatus('valid')
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [applyLicenseState, licenseKey, previewMode, readCachedLicenseState],
-  )
+  // Private use: license validation disabled — always treat as valid.
+  // (Upstream's remote license check / legacy-upgrade flow is intentionally bypassed.)
+  const validateLicense = useCallback(async (_forceRefresh = false) => {
+    setLicenseStatus('valid')
+  }, [])
 
   const handleVerifyUpgrade = useCallback(() => {
     validateLicense(true)
